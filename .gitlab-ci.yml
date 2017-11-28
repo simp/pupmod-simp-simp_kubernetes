@@ -1,0 +1,122 @@
+---
+.cache_bundler: &cache_bundler
+  cache:
+    untracked: true
+    key: "$CI_BUILD_REF_NAME"
+    paths:
+      - '.vendor'
+      - 'vendor'
+
+.setup_bundler_env: &setup_bundler_env
+  before_script:
+    - gem install bundler
+    - rm -f Gemfile.lock
+    - bundle install --no-binstubs --path .vendor "${FLAGS[@]}"
+
+.static_tests: &static_tests
+  script:
+    - bundle exec rake syntax
+    - bundle exec rake lint
+    - bundle exec rake check:dot_underscore
+    - bundle exec rake check:test_file
+    - bundle exec rake pkg:check_version
+    - bundle exec rake compare_latest_tag
+    - bundle exec rake spec
+
+stages:
+  - unit
+  - acceptance
+  - deploy
+
+# Puppet 4
+puppet-gemfile:
+  stage: unit
+  tags:
+    - docker
+  image: ruby:2.1.9
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  <<: *static_tests
+
+# For PE LTS Support
+# See: https://puppet.com/misc/puppet-enterprise-lifecycle
+puppet-4.7:
+  stage: unit
+  tags:
+    - docker
+  image: ruby:2.1.9
+  variables:
+    PUPPET_VERSION: '4.7'
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  <<: *static_tests
+
+puppet-5:
+  stage: unit
+  tags:
+    - docker
+  image: ruby:2.4
+  variables:
+    PUPPET_VERSION: '5.0'
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  <<: *static_tests
+
+
+redhat:
+  stage: acceptance
+  tags:
+    - beaker
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  variables:
+    PUPPET_VERSION: '4.10'
+  script:
+    - bundle exec rake beaker:suites[redhat]
+
+ce:
+  stage: acceptance
+  tags:
+    - beaker
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  variables:
+    PUPPET_VERSION: '4.10'
+  script:
+    - bundle exec rake beaker:suites[ce]
+
+redhat-fips:
+  stage: acceptance
+  tags:
+    - beaker
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  variables:
+    BEAKER_fips: 'yes'
+    PUPPET_VERSION: '4.10'
+  script:
+    - bundle exec rake beaker:suites[redhat]
+
+ce-fips:
+  stage: acceptance
+  tags:
+    - beaker
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  variables:
+    PUPPET_VERSION: '4.10'
+    BEAKER_fips: 'yes'
+  script:
+    - bundle exec rake beaker:suites[ce]
+
+redhat-latest:
+  stage: acceptance
+  tags:
+    - beaker
+  <<: *cache_bundler
+  <<: *setup_bundler_env
+  variables:
+    PUPPET_VERSION: '5.0.0'
+  script:
+    - bundle exec rake beaker:suites[redhat]
+  allow_failure: true
