@@ -5,14 +5,14 @@ require 'simp/beaker_helpers'
 include Simp::BeakerHelpers
 
 unless ENV['BEAKER_provision'] == 'no'
-  hosts.each do |host|
-    # Install Puppet
-    if host.is_pe?
-      install_pe
-    else
-      install_puppet
-    end
-  end
+ hosts.each do |host|
+   # Install Puppet
+   if host.is_pe?
+     install_pe
+   else
+     install_puppet
+   end
+ end
 end
 
 
@@ -32,7 +32,11 @@ RSpec.configure do |c|
       # Generate and install PKI certificates on each SUT
       Dir.mktmpdir do |cert_dir|
         run_fake_pki_ca_on( default, hosts, cert_dir )
-        hosts.each{ |sut| copy_pki_to( sut, cert_dir, '/etc/pki/simp-testing' )}
+        hosts.each do |sut|
+          copy_pki_to( sut, cert_dir, '/etc/pki/simp-testing' )
+          on( sut, 'chown -R root:root /etc/pki/simp-testing')
+          on( sut, 'chmod -R ugo=rX /etc/pki/simp-testing')
+        end
       end
     rescue StandardError, ScriptError => e
       if ENV['PRY']

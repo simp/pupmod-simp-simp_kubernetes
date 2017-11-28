@@ -1,2 +1,38 @@
 ---
-# simp_kubernetes::parameter_name: 'value'
+simp_kubernetes::is_master: false
+simp_kubernetes::network_tech: 'flannel'
+simp_kubernetes::manage_etcd: true
+simp_kubernetes::bootstrap_etcd: true
+simp_kubernetes::etcd_prefix: /kube-simp/network
+simp_kubernetes::flannel_network_config:
+  Network: 10.30.0.0/16
+  SubnetLen: 24
+  Port: 8472
+  Backend:
+    Type: vxlan
+
+simp_kubernetes::etcd_peer_listen_address: 0.0.0.0
+simp_kubernetes::etcd_client_listen_address: 0.0.0.0
+simp_kubernetes::etcd_client_port: 2379
+simp_kubernetes::etcd_peer_port: 2380
+simp_kubernetes::etcd_options: {}
+
+simp_kubernetes::kube_api_port: 8080
+simp_kubernetes::allow_priv: false
+simp_kubernetes::logtostderr: true
+simp_kubernetes::log_level: 2
+simp_kubernetes::api_args: {}
+
+simp_kubernetes::service_addresses: 10.254.0.0/16
+simp_kubernetes::api_listen_address: 0.0.0.0
+simp_kubernetes::kubelet_port: 10250
+simp_kubernetes::master_api_args: {}
+simp_kubernetes::scheduler_args: {}
+simp_kubernetes::controller_args: {}
+
+simp_kubernetes::kubelet_listen_address: 0.0.0.0
+simp_kubernetes::kubelet_hostname: ~
+simp_kubernetes::proxy_args: {}
+simp_kubernetes::kubelet_args: {}
+
+simp_kubernetes::flannel_args: {}

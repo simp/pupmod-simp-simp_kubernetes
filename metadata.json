@@ -8,9 +8,16 @@
   "project_page": "https://github.com/simp/pupmod-simp-simp_kubernetes",
   "issues_url": "https://simp-project.atlassian.net",
   "tags": [
-    "simp"
+    "simp",
+    "etcd",
+    "k8s",
+    "kubernetes"
   ],
   "dependencies": [
+    {
+      "name": "cristifalcas-etcd",
+      "version_requirement": ">= 1.12.1 < 2.0.0"
+    },
     {
       "name": "simp/simplib",
       "version_requirement": ">= 3.3.1 < 4.0.0"

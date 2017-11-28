@@ -1,0 +1,10 @@
+# ####################################################################
+# # This file is managed by Puppet. Any changes will be overwritten. #
+# ####################################################################
+
+# kubernetes proxy config
+
+# default config should be adequate
+
+# Add your own!
+KUBE_PROXY_ARGS=""

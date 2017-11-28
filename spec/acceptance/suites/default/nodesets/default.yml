@@ -1,5 +1,5 @@
 HOSTS:
-  server01:
+  master01:
     roles:
       - server
       - default
@@ -7,13 +7,20 @@ HOSTS:
     platform:   el-7-x86_64
     box:        centos/7
     hypervisor: vagrant
-  server02:
+    vagrant_memsize: 1024
+  node01:
     roles:
       - node
     platform:   el-7-x86_64
     box:        centos/7
     hypervisor: vagrant
-  server03:
+  node02:
+    roles:
+      - node
+    platform:   el-7-x86_64
+    box:        centos/7
+    hypervisor: vagrant
+  node03:
     roles:
       - node
     platform:   el-7-x86_64
