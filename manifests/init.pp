@@ -17,7 +17,7 @@
 # @param manage_etcd
 #   Install and manage etcd
 #
-# @param bootstrap_etcd
+# @param inject_network_config
 #   Fill etcd with the network configuration required by flannel
 #
 # @param etcd_prefix
@@ -102,7 +102,8 @@ class simp_kubernetes (
   Boolean $is_master,
   Optional[String] $network_tech,
   Boolean $manage_etcd,
-  Boolean $bootstrap_etcd,
+  Boolean $inject_network_config,
+  Boolean $etcd_static_cluster,
   String $etcd_prefix,
   Hash $flannel_network_config,
 

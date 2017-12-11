@@ -2,7 +2,8 @@
 simp_kubernetes::is_master: false
 simp_kubernetes::network_tech: 'flannel'
 simp_kubernetes::manage_etcd: true
-simp_kubernetes::bootstrap_etcd: true
+simp_kubernetes::inject_network_config: true
+simp_kubernetes::etcd_static_cluster: true
 simp_kubernetes::etcd_prefix: /kube-simp/network
 simp_kubernetes::flannel_network_config:
   Network: 10.30.0.0/16

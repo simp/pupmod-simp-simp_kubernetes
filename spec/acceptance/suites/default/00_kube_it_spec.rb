@@ -5,13 +5,13 @@ test_name 'kubernetes using redhat provided packages'
 
 describe 'kubernetes using redhat provided packages' do
 
-  masters    = hosts_with_role(hosts,'master')
+  masters    = hosts_with_role(hosts,'kube-master')
   nodes      = hosts_with_role(hosts,'node')
   controller = masters.first
 
   manifest = "include 'simp_kubernetes'"
 
-  cluster = masters.map{|h| fact_on(h,'fqdn') }.join(',')
+  cluster = masters.map{|h| fact_on(h,'fqdn') }
   base_hiera = {
     'simp_kubernetes::etcd_peers'   => Array(cluster),
     'simp_kubernetes::kube_masters' => Array(cluster),

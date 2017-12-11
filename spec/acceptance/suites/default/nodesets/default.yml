@@ -3,11 +3,22 @@ HOSTS:
     roles:
       - server
       - default
-      - master
+      - kube-master
     platform:   el-7-x86_64
     box:        centos/7
     hypervisor: vagrant
-    vagrant_memsize: 1024
+  master02:
+    roles:
+      - kube-master
+    platform:   el-7-x86_64
+    box:        centos/7
+    hypervisor: vagrant
+  master03:
+    roles:
+      - kube-master
+    platform:   el-7-x86_64
+    box:        centos/7
+    hypervisor: vagrant
   node01:
     roles:
       - node
