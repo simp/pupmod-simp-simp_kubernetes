@@ -20,6 +20,23 @@ describe 'kubernetes using redhat provided packages' do
     },
   }
 
+  # masters.each do |host|
+  #   it 'should set up etcd' do
+  #     # this will fail until all etcd servers are up
+  #     master_hiera = base_hiera.merge(
+  #       'simp_kubernetes::is_master' => true
+  #     )
+  #     set_hieradata_on(host, master_hiera)
+  #     apply_manifest_on(host, manifest, run_in_parallel: true)
+  #   end
+  # end
+  #
+  # masters.each do |host|
+  #   it 'should start etcd' do
+  #     on(host, 'systemctl restart etcd &', run_in_parallel: true)
+  #   end
+  # end
+
   masters.each do |host|
     it 'should do master stuff' do
       master_hiera = base_hiera.merge(

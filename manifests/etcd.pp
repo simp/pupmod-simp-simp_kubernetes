@@ -13,6 +13,19 @@ class simp_kubernetes::etcd {
   #   'peer_trusted_ca_file'  => '/etc/pki/simp-testing/pki/cacerts/cacerts.pem',
   # }
 
+  $etcd_listen_peer_urls = $::simp_kubernetes::etcd_peers.map |$peer| {
+    "http://${peer}:${::simp_kubernetes::etcd_peer_port}"
+  }
+  $etcd_cluster = zip($::simp_kubernetes::etcd_peers,$etcd_listen_peer_urls).map |$url| {
+    if $url[0] == $facts['fqdn'] {
+      "${url[0]}=http://0.0.0.0:${::simp_kubernetes::etcd_peer_port}"
+    }
+    else {
+      "${url[0]}=${url[1]}"
+    }
+  }
+  # $::simp_kubernetes::etcd_listen_peer_urls.join(',')
+
   $client_listen_url = "http://${::simp_kubernetes::etcd_client_listen_address}:${::simp_kubernetes::etcd_client_port}"
   $peer_listen_url   = "http://${::simp_kubernetes::etcd_peer_listen_address}:${::simp_kubernetes::etcd_peer_port}"
 
@@ -25,8 +38,8 @@ class simp_kubernetes::etcd {
 
   if $::simp_kubernetes::etcd_static_cluster {
     $cluster_params = {
-      initial_advertise_peer_urls => $::simp_kubernetes::etcd_listen_peer_urls.join(','),
-      initial_cluster             => $::simp_kubernetes::etcd_cluster,
+      initial_advertise_peer_urls => "http://0.0.0.0:${::simp_kubernetes::etcd_peer_port}",
+      initial_cluster             => $etcd_cluster,
     }
   }
   else {

@@ -1,6 +1,5 @@
-**FIXME**: Ensure the badges are correct and complete, then remove this message!
+[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Build Status](https://travis-ci.org/simp/pupmod-simp-simp_kubernetes.svg)](https://travis-ci.org/simp/pupmod-simp-simp_kubernetes) [![pipeline status](https://gitlab.com/simp/pupmod-simp-simp_kubernetes/badges/master/pipeline.svg)](https://gitlab.com/simp/pupmod-simp-simp_kubernetes/commits/master)
 
-[![License](http://img.shields.io/:license-apache-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0.html) [![Build Status](https://travis-ci.org/simp/pupmod-simp-simp_kubernetes.svg)](https://travis-ci.org/simp/pupmod-simp-simp_kubernetes) [![SIMP compatibility](https://img.shields.io/badge/SIMP%20compatibility-6.*-orange.svg)](https://img.shields.io/badge/SIMP%20compatibility-6.*-orange.svg)
 
 #### Table of Contents
 
@@ -19,16 +18,28 @@
 
 **FIXME:** Ensure the *Description* section is correct and complete, then remove this message!
 
-Start with a one- or two-sentence summary of what the module does and/or what
-problem it solves. This is your 30-second elevator pitch for your module.
-Consider including OS and Puppet version compatability, and any other
-information users will need to quickly assess the module's viability within
-their environment.
+Minimally manage a Kubernetes cluster! This module will configure the core
+services required to get a basic Kubernetes cluster up and running.
 
-You can give more descriptive information in a second paragraph. This paragraph
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?" If your module has a range of functionality (installation, configuration,
-management, etc.), this is the time to mention it.
+![Kubernetes Architecture](assets/kube_arch.png)
+(Source: https://speakerdeck.com/luxas/kubeadm-cluster-creation-internals-from-self-hosting-to-upgradability-and-ha)
+
+This module can set up:
+* Every host
+  - `etcd`
+  - `flanneld`
+* Master hosts
+  - `kube-apiserver`
+  - `kube-controller-manager`
+  - `kube-scheduler`
+* Node hosts
+  - `kubelet`
+  - `kube-proxy`
+
+This module will not interact with Kubernetes in any way, besides what can be
+configured on a system level.
+
+**NOTE:** This module only supports EL7.  **It does not support EL6.**
 
 ### This is a SIMP module
 

@@ -27,6 +27,7 @@ describe 'simp_kubernetes' do
       context "on #{os}" do
         let(:facts) do
           facts = os_facts
+          facts['fqdn'] = 'etcd01.test'
           facts
         end
 
@@ -91,12 +92,12 @@ describe 'simp_kubernetes' do
             content: File.read('spec/expected/controller-manager.txt')
           ) }
           it { is_expected.to contain_class('etcd').with(
-            etcd_name:                   'foo.example.com',
+            etcd_name:                   'etcd01.test',
             listen_client_urls:          'http://0.0.0.0:2379',
             advertise_client_urls:       'http://etcd01.test:2379,http://etcd02.test:2379,http://etcd03.test:2379',
             listen_peer_urls:            'http://0.0.0.0:2380',
-            initial_advertise_peer_urls: 'http://etcd01.test:2380,http://etcd02.test:2380,http://etcd03.test:2380',
-            initial_cluster:             [ 'etcd01.test=http://etcd01.test:2380',
+            initial_advertise_peer_urls: 'http://0.0.0.0:2380',
+            initial_cluster:             [ 'etcd01.test=http://0.0.0.0:2380',
                                            'etcd02.test=http://etcd02.test:2380',
                                            'etcd03.test=http://etcd03.test:2380'
                                          ],

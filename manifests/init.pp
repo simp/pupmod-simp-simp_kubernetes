@@ -20,6 +20,11 @@
 # @param inject_network_config
 #   Fill etcd with the network configuration required by flannel
 #
+# @param etcd_static_cluster
+#   Use the 'static' method to bootstrap the etcd cluster. Other methods
+#   require setup outside the scope of this module, but should still be
+#   compatible using this toggle.
+#
 # @param etcd_prefix
 #   The etcd prefix where the flannel's configuration can be found
 #
@@ -34,6 +39,14 @@
 #
 # @param etcd_peer_port
 #   Port that etcd uses for peering
+#
+# @param etcd_peer_listen_address
+#   Address of interface that etcd will listen on for peer communication
+#   `0.0.0.0` for all interfaces.
+#
+# @param etcd_client_listen_address
+#   Address of interface that etcd will listen on for client communication
+#   `0.0.0.0` for all interfaces.
 #
 # @param etcd_options
 #   Hash of extra options to be passed along to cristifalcas/etcd
@@ -113,6 +126,8 @@ class simp_kubernetes (
   Simplib::Port $etcd_peer_port,
   Simplib::IP $etcd_peer_listen_address,
   Simplib::IP $etcd_client_listen_address,
+  Boolean $etcd_peer_tls,
+  Boolean $etcd_client_tls,
   Hash $etcd_options,
 
 # every-host
@@ -145,14 +160,8 @@ class simp_kubernetes (
   Simplib::Netlist $trusted_nets = simplib::lookup('simp_options::trusted_nets', {'default_value' => ['127.0.0.1/32'] }),
 ) {
 
-  $etcd_listen_peer_urls = $etcd_peers.map |$peer| {
-    "http://${peer}:${etcd_peer_port}"
-  }
   $etcd_advertise_client_urls = $etcd_peers.map |$peer| {
     "http://${peer}:${etcd_client_port}"
-  }
-  $etcd_cluster = zip($etcd_peers,$etcd_listen_peer_urls).map |$url| {
-    "${url[0]}=${url[1]}"
   }
 
   $kube_master_urls = $kube_masters.map |$master| {
