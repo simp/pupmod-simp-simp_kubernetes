@@ -63,7 +63,7 @@ puppet-5:
   <<: *static_tests
 
 
-redhat:
+one-master:
   stage: acceptance
   tags:
     - beaker
@@ -72,20 +72,9 @@ redhat:
   variables:
     PUPPET_VERSION: '4.10'
   script:
-    - bundle exec rake beaker:suites[redhat]
+    - bundle exec rake beaker:suites[one-master]
 
-ce:
-  stage: acceptance
-  tags:
-    - beaker
-  <<: *cache_bundler
-  <<: *setup_bundler_env
-  variables:
-    PUPPET_VERSION: '4.10'
-  script:
-    - bundle exec rake beaker:suites[ce]
-
-redhat-fips:
+one-master-fips:
   stage: acceptance
   tags:
     - beaker
@@ -95,21 +84,9 @@ redhat-fips:
     BEAKER_fips: 'yes'
     PUPPET_VERSION: '4.10'
   script:
-    - bundle exec rake beaker:suites[redhat]
+    - bundle exec rake beaker:suites[one-master]
 
-ce-fips:
-  stage: acceptance
-  tags:
-    - beaker
-  <<: *cache_bundler
-  <<: *setup_bundler_env
-  variables:
-    PUPPET_VERSION: '4.10'
-    BEAKER_fips: 'yes'
-  script:
-    - bundle exec rake beaker:suites[ce]
-
-redhat-latest:
+one-master-latest:
   stage: acceptance
   tags:
     - beaker
@@ -118,5 +95,5 @@ redhat-latest:
   variables:
     PUPPET_VERSION: '5.0.0'
   script:
-    - bundle exec rake beaker:suites[redhat]
+    - bundle exec rake beaker:suites[one-master]
   allow_failure: true

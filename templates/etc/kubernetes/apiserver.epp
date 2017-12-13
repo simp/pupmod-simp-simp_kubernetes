@@ -1,5 +1,5 @@
-<%- | Simplib::Host       $api_address,
-      Simplib::Port       $api_port,
+<%- | String              $address,
+      String              $port,
       Array[Simplib::URI] $etcd_servers,
       Simplib::IP::CIDR   $service_addresses,
       Hash                $api_args,
@@ -9,10 +9,10 @@
 # ####################################################################
 
 # The address on the local server to listen to.
-KUBE_API_ADDRESS="--insecure-bind-address=<%= $api_address %>"
+KUBE_API_ADDRESS="<%= $address %>"
 
 # The port on the local server to listen on.
-KUBE_API_PORT="--insecure-port=<%= $api_port %>"
+KUBE_API_PORT="<%= $port %>"
 
 # Comma separated list of nodes in the etcd cluster
 KUBE_ETCD_SERVERS="--etcd-servers=<%= $etcd_servers.join(',') %>"

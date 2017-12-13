@@ -1,3 +1,4 @@
+# Configure flannel using etcd params from the parent class
 #
 class simp_kubernetes::flannel {
   assert_private()
@@ -6,10 +7,21 @@ class simp_kubernetes::flannel {
     ensure => $::simp_kubernetes::flannel_package_ensure,
   }
 
+  if $::simp_kubernetes::etcd_client_protocol == 'https' and $::simp_kubernetes::use_simp_certs {
+    $pki_params = {
+      'etcd-certfile' => $::simp_kubernetes::etcd_app_pki_key,
+      'etcd-keyfile'  => $::simp_kubernetes::etcd_app_pki_cert,
+      'etcd-cafile'   => $::simp_kubernetes::etcd_app_pki_ca,
+    }
+  }
+  else {
+    $pki_params = {}
+  }
+
   $flanneld_template = epp('simp_kubernetes/etc/sysconfig/flanneld', {
       'etcd_endpoints' => $::simp_kubernetes::etcd_advertise_client_urls,
       'etcd_prefix'    => $::simp_kubernetes::etcd_prefix,
-      'args'           => $::simp_kubernetes::flannel_args,
+      'args'           => $pki_params + $::simp_kubernetes::flannel_args,
     }
   )
 
