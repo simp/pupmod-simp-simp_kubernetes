@@ -1,6 +1,6 @@
 # Manage etcd
 #
-class simp_kubernetes::etcd {
+class simp_kubernetes::master::etcd {
 
   $client_protocol   = $::simp_kubernetes::etcd_client_protocol
   $client_listen_url = "${client_protocol}://${::simp_kubernetes::etcd_client_listen_address}:${::simp_kubernetes::etcd_client_port}"
@@ -13,6 +13,8 @@ class simp_kubernetes::etcd {
   $etcd_listen_peer_urls = $peers.map |$peer| {
     "${peer_protocol}://${peer}:${peer_port}"
   }
+  # this is probably wrong, but there is an issue with the way we start etcd with puppet
+  # and how etcd does leader election and cluster bootstrapping
   $etcd_cluster = zip($peers,$etcd_listen_peer_urls).map |$url| {
     if $url[0] == $facts['fqdn'] {
       "${url[0]}=${peer_protocol}://0.0.0.0:${peer_port}"
@@ -70,6 +72,16 @@ class simp_kubernetes::etcd {
   class { '::etcd':
     # the last hash has highest priority
     * => $cluster_params + $client_pki_params + $peer_pki_params + $base_params + $::simp_kubernetes::etcd_options
+  }
+
+
+  if $::simp_kubernetes::etcd_manage_firewall {
+    iptables::listen::tcp_stateful {
+      default: trusted_nets => $::simp_kubernetes::trusted_nets;
+
+      'simp_kubernetes etcd_peer_port':   dports => [$::simp_kubernetes::etcd_peer_port];
+      'simp_kubernetes etcd_client_port': dports => [$::simp_kubernetes::etcd_client_port];
+    }
   }
 
 

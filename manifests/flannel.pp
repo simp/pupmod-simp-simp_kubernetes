@@ -36,4 +36,12 @@ class simp_kubernetes::flannel {
     subscribe => File['/etc/sysconfig/flanneld']
   }
 
+  if $::simp_kubernetes::flannel_manage_firewall {
+    $port = $::simp_kubernetes::flannel_network_config['Port']
+    iptables::listen::udp { 'simp_kubernetes flannel':
+      trusted_nets => $::simp_kubernetes::trusted_nets,
+      dports       => [$port],
+    }
+  }
+
 }

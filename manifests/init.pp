@@ -57,21 +57,6 @@
 #   Address of interface that etcd will listen on for client communication
 #   `0.0.0.0` for all interfaces.
 #
-# @param etcd_peer_protocol
-#   `http` or `https`. Be sure to specify certificates if this is set to `https`
-#
-# @param etcd_app_pki_key
-#   Path and name of the private SSL key file for etcd
-#
-# @param etcd_app_pki_cert
-#   Path and name of the public SSL certificate for etcd
-#
-# @param etcd_app_pki_ca
-#   Path to the CA for etcd
-#
-# @param etcd_client_protocol
-#   `http` or `https`. Be sure to specify certificates if this is set to `https`
-#
 # @param etcd_options
 #   Hash of extra options to be passed along to cristifalcas/etcd
 #
@@ -157,9 +142,18 @@
 # @param flannel_package_ensure
 #   Forwarded to the package resource for flannel
 #
+# @param etcd_manage_firewall
+#   Open up the firewall for ports used for etcd in this module using simp/iptables
+#
+# @param kube_manage_firewall
+#   Open up the firewall for ports used for kubernetes in this module using simp/iptables
+#
+# @param flannel_manage_firewall
+#   Open up the firewall for ports used for flannel in this module using simp/iptables
+#
 # @param trusted_nets
 #   The address range(s) to allow connections from for host to host
-#   communication.
+#   communication
 #
 # @author https://github.com/simp/pupmod-simp-simp_kubernetes/graphs/contributors
 #
@@ -221,10 +215,12 @@ class simp_kubernetes (
 # SIMP Catalysts
   Variant[Boolean,Enum['simp']] $use_simp_certs = simplib::lookup('simp_options::pki', { 'default_value' => false }),
   Stdlib::Absolutepath $app_pki_external_source = simplib::lookup('simp_options::pki::source', { 'default_value' => '/etc/pki/simp/x509' }),
-  String $package_ensure         = simplib::lookup('simp_options::package_ensure', {'default_value' => 'installed' }),
+  String $package_ensure = simplib::lookup('simp_options::package_ensure', {'default_value' => 'installed' }),
   String $flannel_package_ensure = simplib::lookup('simp_options::package_ensure', {'default_value' => 'installed' }),
+  Boolean $etcd_manage_firewall = simplib::lookup('simp_options::firewall', {'default_value' => false }),
+  Boolean $kube_manage_firewall = simplib::lookup('simp_options::firewall', {'default_value' => false }),
+  Boolean $flannel_manage_firewall = simplib::lookup('simp_options::firewall', {'default_value' => false }),
   Simplib::Netlist $trusted_nets = simplib::lookup('simp_options::trusted_nets', {'default_value' => ['127.0.0.1/32'] }),
-
 ) {
 
   $etcd_advertise_client_urls = $etcd_peers.map |$peer| {
@@ -252,7 +248,7 @@ class simp_kubernetes (
 
   if $is_master {
     include '::simp_kubernetes::master'
-    Class['simp_kubernetes::etcd'] -> Class['simp_kubernetes::flannel']
+    Class['simp_kubernetes::master::etcd'] -> Class['simp_kubernetes::flannel']
     Class['simp_kubernetes::common_config'] -> Class['simp_kubernetes::master']
   }
   else {
