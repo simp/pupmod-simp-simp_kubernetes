@@ -54,6 +54,10 @@ describe 'simp_kubernetes' do
               ensure: 'file',
               content: File.read('spec/expected/etc/kubernetes/proxy.txt')
             ) }
+            it { is_expected.to contain_file('/etc/kubernetes/proxy.kubeconfig').with(
+              ensure: 'file',
+              content: File.read('spec/expected/etc/kubernetes/proxy.kubeconfig.txt')
+            ) }
             it { is_expected.to contain_class('simp_kubernetes::node::kubelet') }
             it { is_expected.to contain_service('kubelet').with_ensure('running') }
             it { is_expected.to contain_file('/etc/kubernetes/kubelet').with(
@@ -88,6 +92,14 @@ describe 'simp_kubernetes' do
               ensure: 'file',
               content: File.read('spec/expected/etc/kubernetes/kubelet-tls.txt')
             ) }
+            it { is_expected.to contain_file('/etc/kubernetes/proxy').with(
+              ensure: 'file',
+              content: File.read('spec/expected/etc/kubernetes/proxy.txt')
+            ) }
+            it { is_expected.to contain_file('/etc/kubernetes/proxy.kubeconfig').with(
+              ensure: 'file',
+              content: File.read('spec/expected/etc/kubernetes/proxy.kubeconfig-tls.txt')
+            ) }
           end
         end
 
@@ -116,11 +128,19 @@ describe 'simp_kubernetes' do
               ensure: 'file',
               content: File.read('spec/expected/etc/kubernetes/scheduler.txt')
             ) }
+            it { is_expected.to contain_file('/etc/kubernetes/scheduler.kubeconfig').with(
+              ensure: 'file',
+              content: File.read('spec/expected/etc/kubernetes/scheduler.kubeconfig.txt')
+            ) }
             it { is_expected.to contain_class('simp_kubernetes::master::controller_manager') }
             it { is_expected.to contain_service('kube-controller-manager').with_ensure('running') }
             it { is_expected.to contain_file('/etc/kubernetes/controller-manager').with(
               ensure: 'file',
               content: File.read('spec/expected/etc/kubernetes/controller-manager.txt')
+            ) }
+            it { is_expected.to contain_file('/etc/kubernetes/controller-manager.kubeconfig').with(
+              ensure: 'file',
+              content: File.read('spec/expected/etc/kubernetes/controller-manager.kubeconfig.txt')
             ) }
             it { is_expected.to contain_class('etcd').with(
               etcd_name:                   'etcd01.test',
@@ -188,10 +208,19 @@ describe 'simp_kubernetes' do
               ensure: 'file',
               content: File.read('spec/expected/etc/kubernetes/controller-manager-tls.txt')
             ) }
+            it { is_expected.to contain_file('/etc/kubernetes/controller-manager.kubeconfig').with(
+              ensure: 'file',
+              content: File.read('spec/expected/etc/kubernetes/controller-manager.kubeconfig-tls.txt')
+            ) }
             it { is_expected.to contain_file('/etc/kubernetes/scheduler').with(
               ensure: 'file',
               content: File.read('spec/expected/etc/kubernetes/scheduler-tls.txt')
             ) }
+            it { is_expected.to contain_file('/etc/kubernetes/scheduler.kubeconfig').with(
+              ensure: 'file',
+              content: File.read('spec/expected/etc/kubernetes/scheduler.kubeconfig-tls.txt')
+            ) }
+
           end
 
           context 'with extra api args' do
