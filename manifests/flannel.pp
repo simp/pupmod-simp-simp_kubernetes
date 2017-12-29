@@ -33,7 +33,8 @@ class simp_kubernetes::flannel {
   service { 'flanneld':
     ensure    => running,
     enable    => true,
-    subscribe => File['/etc/sysconfig/flanneld']
+    subscribe => File['/etc/sysconfig/flanneld'],
+    require   => Package['flannel'],
   }
 
   if $::simp_kubernetes::flannel_manage_firewall {

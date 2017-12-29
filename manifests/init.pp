@@ -247,12 +247,11 @@ class simp_kubernetes (
   -> Class['simp_kubernetes::common_config']
 
   if $is_master {
-    include '::simp_kubernetes::master'
-    Class['simp_kubernetes::master::etcd'] -> Class['simp_kubernetes::flannel']
+    contain '::simp_kubernetes::master'
     Class['simp_kubernetes::common_config'] -> Class['simp_kubernetes::master']
   }
   else {
-    include '::simp_kubernetes::node'
+    contain '::simp_kubernetes::node'
     Class['simp_kubernetes::common_config'] -> Class['simp_kubernetes::node']
   }
 

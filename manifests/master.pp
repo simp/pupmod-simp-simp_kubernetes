@@ -18,8 +18,8 @@ class simp_kubernetes::master {
     }
   }
 
-  include '::simp_kubernetes::master::apiserver'
-  include '::simp_kubernetes::master::controller_manager'
-  include '::simp_kubernetes::master::scheduler'
+  contain '::simp_kubernetes::master::apiserver'
+  contain '::simp_kubernetes::master::controller_manager'
+  contain '::simp_kubernetes::master::scheduler'
 
 }
