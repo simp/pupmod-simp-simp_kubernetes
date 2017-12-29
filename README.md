@@ -37,6 +37,9 @@ This module can set up:
   - `kube-proxy`
 * Kubeconfigs
 
+Using the following packages from the CentOS Extras repo:
+* kubernetes
+
 This module will not interact with Kubernetes in any way, besides what can be
 configured on a system level.
 
@@ -67,7 +70,6 @@ it can be used independently:
 
 ### What simp_kubernetes affects
 
-**FIXME:** Ensure the *What simp_kubernetes affects* section is correct and complete, then remove this message!
 
 simp_kubernetes only sets up the services listed above, with a few catches:
 
@@ -77,57 +79,71 @@ simp_kubernetes only sets up the services listed above, with a few catches:
   required for a complete set up
 * There are no Load Balancers available in the CentOS repos, so there is not one
   available out of the box using this module
-*
 
-If it's obvious what your module touches, you can skip this section. For
-example, folks can probably figure out that your mysql_instance module affects
-their MySQL instances.
+ **NOTE:** This module only supports EL7.  **It does not support EL6.**
 
-If there's more that they should know about, though, this is the place to
-mention:
+### Usage
 
- * A list of files, packages, services, or operations that the module will
-   alter, impact, or execute.
- * Dependencies that your module automatically installs.
- * Warnings or other important notices.
+The minimal set up would look as follows:
 
-### Setup Requirements **OPTIONAL**
+```puppet
+class { 'simp_kubernetes':
+  etcd_peers   => ['kube-master01.domain.net'],
+  kube_masters => ['kube-master01.domain.net','kube-master02.domain.net','kube-master03.domain.net']
+}
+```
 
-**FIXME:** Ensure the *Setup Requirements* section is correct and complete, then remove this message!
+Where `etcd_peers` is a list of hostnames that will be etcd servers, and
+`kube_masters` is the list of servers where the kubernetes API will be available.
+These parameters will result in a kubernetes cluster using flannel as a network
+backend with all communication over http.
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
+If you need a HA etcd, you will probably be better off setting that up elsewhere
+for now, and setting `manage_etcd` to `false`.
 
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you might want to include an additional "Upgrading" section
-here.
 
-### Beginning with simp_kubernetes
+To enable TLS, call your class like this:
 
-**FIXME:** Ensure the *Beginning with simp_kubernetes* section is correct and complete, then remove this message!
+```puppet
+class { 'simp_kubernetes':
+  etcd_peers           => ['kube-master01.domain.net'],
+  etcd_peer_protocol   => 'https',
+  etcd_client_protocol => 'https',
+  etcd_app_pki_key     => '/path/to/cert',
+  etcd_app_pki_cert    => '/path/to/cert',
+  etcd_app_pki_ca      => '/path/to/cert',
+  kube_masters         => ['kube-master01.domain.net','kube-master02.domain.net','kube-master03.domain.net'],
+  kube_api_protocol    => 'https',
+  kubelet_protocol     => 'https',
+  kube_api_port        => 6443,
+  app_pki_key          => '/path/to/cert',
+  app_pki_cert         => '/path/to/cert',
+  app_pki_ca           => '/path/to/cert',
+}
+```
 
-The very basic steps needed for a user to get the module up and running. This
-can include setup steps, if necessary, or it can be an example of the most
-basic use of the module.
-
-## Usage
-
-**FIXME:** Ensure the *Usage* section is correct and complete, then remove this message!
-
-This section is where you describe how to customize, configure, and do the
-fancy stuff with your module here. It's especially helpful if you include usage
-examples and code samples for doing things with your module.
+There are many parameters in this module that are useful for tweaking every
+service in this module:
+* `flannel_network_config`
+* `flannel_args`
+* `etcd_options`
+* `api_args`
+* `master_api_args`
+* `scheduler_args`
+* `controller_args`
+* `proxy_args`
+* `kubelet_args`
 
 ## Reference
-
-**FIXME:** Ensure the *Reference* section is correct and complete, then remove this message!  If there is pre-generated YARD documentation for this module, ensure the text links to it and remove references to inline documentation.
 
 Please refer to the inline documentation within each source file, or to the
 module's generated YARD documentation for reference material.
 
 ## Limitations
 
-**FIXME:** Ensure the *Limitations* section is correct and complete, then remove this message!
+This module is only intended to work with RedHat's distribution of kubernetes.
+If a newer version is required or a version from a different source, this module
+may not work as intended.
 
 SIMP Puppet modules are generally intended for use on Red Hat Enterprise Linux
 and compatible distributions, such as CentOS. Please see the
@@ -135,8 +151,6 @@ and compatible distributions, such as CentOS. Please see the
 supported operating systems, Puppet versions, and module dependencies.
 
 ## Development
-
-**FIXME:** Ensure the *Development* section is correct and complete, then remove this message!
 
 Please read our [Contribution Guide](http://simp-doc.readthedocs.io/en/stable/contributors_guide/index.html).
 
@@ -154,7 +168,8 @@ bundle install
 bundle exec rake beaker:suites
 ```
 
-**FIXME:** Ensure the *Acceptance tests* section is correct and complete, including any module-specific instructions, and remove this message!
+There is also a suite in simp-core (kubernetes) that tests this component in the
+context of a SIMP system.
 
 Please refer to the [SIMP Beaker Helpers documentation](https://github.com/simp/rubygem-simp-beaker-helpers/blob/master/README.md)
 for more information.

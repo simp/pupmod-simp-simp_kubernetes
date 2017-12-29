@@ -82,7 +82,7 @@
 #   Set the level of log output to debug-level (0~4) or trace-level (5~10)
 #
 # @param api_args
-#   Hash of extra arguments to be sent to any Kubernetes service
+#   Hash of extra arguments to be sent to all Kubernetes services
 #
 # @param service_addresses
 #   Virtual IP range that will be used by Kubernetes services
