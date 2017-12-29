@@ -57,6 +57,21 @@
 #   Address of interface that etcd will listen on for client communication
 #   `0.0.0.0` for all interfaces.
 #
+# @param etcd_peer_protocol
+#   `http` or `https`. Be sure to specify certificates if this is set to `https`
+#
+# @param etcd_client_protocol
+#   `http` or `https`. Be sure to specify certificates if this is set to `https`
+#
+# @param etcd_app_pki_key
+#   Path and name of the private SSL key file for etcd
+#
+# @param etcd_app_pki_cert
+#   Path and name of the public SSL certificate for etcd
+#
+# @param etcd_app_pki_ca
+#   Path to the CA for etcd
+#
 # @param etcd_options
 #   Hash of extra options to be passed along to cristifalcas/etcd
 #
