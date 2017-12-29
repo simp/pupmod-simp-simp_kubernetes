@@ -1,0 +1,10 @@
+
+# Use default_module_facts.yml for module specific facts.
+#
+# Facts specified here will override the values provided by rspec-puppet-facts.
+---
+path: /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+concat_basedir: /tmp
+fqdn: etcd01.test
+networking:
+  fqdn: etcd01.test

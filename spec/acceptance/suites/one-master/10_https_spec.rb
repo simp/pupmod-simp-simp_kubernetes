@@ -13,33 +13,31 @@ describe 'kubernetes using redhat provided packages' do
 
   cluster = masters.map{|h| fact_on(h,'fqdn') }
   base_hiera = {
-    'simp_kubernetes::etcd_peers'   => Array(cluster),
-    'simp_kubernetes::kube_masters' => Array(cluster),
-    'simp_kubernetes::flannel_args' => {
+    'simp_options::pki'                     => true,
+    'simp_options::pki::source'             => '/etc/pki/simp-testing/pki',
+    'simp_kubernetes::etcd_peers'           => Array(cluster),
+    'simp_kubernetes::kube_masters'         => Array(cluster),
+    'simp_kubernetes::etcd_peer_protocol'   => 'https',
+    'simp_kubernetes::etcd_client_protocol' => 'https',
+    'simp_kubernetes::kube_api_protocol'    => 'https',
+    'simp_kubernetes::kubelet_protocol'     => 'https',
+    'simp_kubernetes::kube_api_port'        => 6443,
+    'simp_kubernetes::flannel_args'         => {
       'iface' => 'eth1',
     },
   }
 
-  # masters.each do |host|
-  #   it 'should set up etcd' do
-  #     # this will fail until all etcd servers are up
-  #     master_hiera = base_hiera.merge(
-  #       'simp_kubernetes::is_master' => true
-  #     )
-  #     set_hieradata_on(host, master_hiera)
-  #     apply_manifest_on(host, manifest, run_in_parallel: true)
-  #   end
-  # end
-  #
-  # masters.each do |host|
-  #   it 'should start etcd' do
-  #     on(host, 'systemctl restart etcd &', run_in_parallel: true)
+  # nodes.each do |node|
+  #   it 'add cacerts' do
+  #     on(node, 'cp /etc/pki/simp-testing/pki/cacerts/cacerts.pem /etc/pki/ca-trust/source/anchors/simp_ca.pem')
+  #     on(node, 'update-ca-trust')
   #   end
   # end
 
   masters.each do |host|
-    it 'should do master stuff' do
+    it "should do master stuff on #{host}" do
       master_hiera = base_hiera.merge(
+        'simp_kubernetes::kube_api_listen_address' => fact_on(host, 'ipaddress_eth1'),
         'simp_kubernetes::is_master' => true
       )
       set_hieradata_on(host, master_hiera)
@@ -50,7 +48,7 @@ describe 'kubernetes using redhat provided packages' do
   end
 
   nodes.each do |host|
-    it 'should do node stuff' do
+    it "should do node stuff on #{host}" do
       master_hiera = base_hiera.merge(
         'simp_kubernetes::is_master' => false
       )
@@ -61,9 +59,16 @@ describe 'kubernetes using redhat provided packages' do
     end
   end
 
+  context 'check kubernetes health' do
+    it 'should get componentstatus with no unhealthy components' do
+      status = on(controller, 'kubectl get componentstatus')
+      expect(status.stdout).not_to match(/Unhealthy/)
+    end
+  end
+
   context 'use kubernetes' do
     it 'should deploy a nginx service ' do
-      scp_to(controller, 'spec/acceptance/suites/default/test-nginx_deployment.yaml','/root/test-nginx_deployment.yaml')
+      scp_to(controller, 'spec/acceptance/suites/one-master/test-nginx_deployment.yaml','/root/test-nginx_deployment.yaml')
       on(controller, 'kubectl create -f /root/test-nginx_deployment.yaml')
     end
   end

@@ -1,12 +1,10 @@
 ---
 fixtures:
   repositories:
-    # iptables:
-    #   repo: https://github.com/simp/pupmod-simp-iptables
-    #   ref: 6.0.1
+    # base deps
     etcd:
       repo: https://github.com/cristifalcas/puppet-etcd
-      # patch made upstream 
+      # patch made upstream
       ref: 9e3bf7f71c2ad3d91351068a51d5db06ff8763fe
     simplib:
       repo: https://github.com/simp/pupmod-simp-simplib
@@ -14,3 +12,10 @@ fixtures:
     stdlib:
       repo: https://github.com/simp/puppetlabs-stdlib
       ref: 4.19.1
+    # integration deps
+    iptables:
+      repo: https://github.com/simp/pupmod-simp-iptables
+      ref: 6.0.1
+    pki:
+      repo: https://github.com/simp/pupmod-simp-pki
+      ref: 6.0.1
