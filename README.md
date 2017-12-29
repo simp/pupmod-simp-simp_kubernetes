@@ -26,7 +26,7 @@ services required to get a basic Kubernetes cluster up and running.
 
 This module can set up:
 * Every host
-  - `etcd`
+  - `etcd` (only one peer has been tested)
   - `flanneld`
 * Master hosts
   - `kube-apiserver`
@@ -35,6 +35,7 @@ This module can set up:
 * Node hosts
   - `kubelet`
   - `kube-proxy`
+* Kubeconfigs
 
 This module will not interact with Kubernetes in any way, besides what can be
 configured on a system level.
@@ -50,13 +51,12 @@ compliance-management framework built on Puppet.
 If you find any issues, they may be submitted to our [bug
 tracker](https://simp-project.atlassian.net/).
 
-**FIXME:** Ensure the *This is a SIMP module* section is correct and complete, then remove this message!
-
 This module is optimally designed for use within a larger SIMP ecosystem, but
 it can be used independently:
 
  * When included within the SIMP ecosystem, security compliance settings will
-   be managed from the Puppet server.
+   be managed from the Puppet server, but only on the systems running kubernetes,
+   not the content in kubernetes.
  * If used independently, all SIMP-managed security subsystems are disabled by
    default and must be explicitly opted into by administrators.  Please review
    the parameters in
@@ -68,6 +68,16 @@ it can be used independently:
 ### What simp_kubernetes affects
 
 **FIXME:** Ensure the *What simp_kubernetes affects* section is correct and complete, then remove this message!
+
+simp_kubernetes only sets up the services listed above, with a few catches:
+
+* The integration with SIMP's PKI may give you trouble, because kubernetes
+  expects certificates with IP subjectAltNames
+* This module does not deploy any services on kubernetes, even if they are
+  required for a complete set up
+* There are no Load Balancers available in the CentOS repos, so there is not one
+  available out of the box using this module
+*
 
 If it's obvious what your module touches, you can skip this section. For
 example, folks can probably figure out that your mysql_instance module affects
