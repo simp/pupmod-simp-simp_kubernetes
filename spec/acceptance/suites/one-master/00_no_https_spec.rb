@@ -71,6 +71,11 @@ describe 'kubernetes using redhat provided packages' do
       set_hieradata_on(host, master_hiera)
       on(host, 'cat /etc/puppetlabs/code/hieradata/default.yaml')
       apply_manifest_on(host, manifest, catch_failures: true)
+
+      # This is here due to a race condition with the kube-proxy service fully
+      # starting
+      sleep 20
+
       apply_manifest_on(host, manifest, catch_changes: true)
     end
   end
