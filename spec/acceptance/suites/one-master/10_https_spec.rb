@@ -55,14 +55,29 @@ describe 'kubernetes using redhat provided packages' do
       set_hieradata_on(host, master_hiera)
       on(host, 'cat /etc/puppetlabs/code/hieradata/default.yaml')
       apply_manifest_on(host, manifest, catch_failures: true)
+
+      # This is here due to a race condition with the kube-proxy service fully
+      # starting
+      sleep 10
+
       apply_manifest_on(host, manifest, catch_changes: true)
     end
   end
 
   context 'check kubernetes health' do
-    it 'should get componentstatus with no unhealthy components' do
-      status = on(controller, 'kubectl get componentstatus')
-      expect(status.stdout).not_to match(/Unhealthy/)
+    # Fix this when we can upgrade to 1.7+
+    xit 'should get componentstatus with no unhealthy components' do
+      status = on(controller, 'kubectl get componentstatus').stdout
+      expect(status).not_to match(/Unhealthy/)
+    end
+
+    it 'should get componentstatus with only etcd unhealthy components' do
+      status = on(controller, 'kubectl get componentstatus').stdout
+
+      # See https://github.com/kubernetes/kubernetes/issues/29330 for details
+      clean_status = status.lines.delete_if{|l| l =~ /^etcd.*Unhealthy.*bad\s+cetificate/}
+
+      expect(clean_status).not_to match(/Unhealthy/)
     end
   end
 

@@ -2,7 +2,7 @@
 #
 class simp_kubernetes::node {
 
-  include '::simp_kubernetes::node::proxy'
-  include '::simp_kubernetes::node::kubelet'
+  contain '::simp_kubernetes::node::proxy'
+  contain '::simp_kubernetes::node::kubelet'
 
 }

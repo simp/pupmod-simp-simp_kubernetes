@@ -9,7 +9,14 @@ describe 'kubernetes using redhat provided packages' do
   nodes      = hosts_with_role(hosts,'node')
   controller = masters.first
 
-  manifest = "include 'simp_kubernetes'"
+  manifest = <<-EOF
+    include 'iptables'
+    iptables::listen::tcp_stateful { 'ssh':
+      trusted_nets => ['0.0.0.0/0'],
+      dports       => [22]
+    }
+    include 'simp_kubernetes'
+  EOF
 
   cluster = masters.map{|h| fact_on(h,'fqdn') }
   base_hiera = {
@@ -18,14 +25,10 @@ describe 'kubernetes using redhat provided packages' do
     'simp_kubernetes::flannel_args' => {
       'iface' => 'eth1',
     },
+    'simp_options::firewall'        => true,
+    'simp_options::trusted_nets'    => ['0.0.0.0/0'],
+    'iptables::ignore'              => ['DOCKER','docker','KUBE-',],
   }
-
-  hosts.each do |host|
-    it 'should set a root password' do
-      on(host, "sed -i 's/enforce_for_root//g' /etc/pam.d/*")
-      on(host, 'echo "root:password" | chpasswd --crypt-method SHA256')
-    end
-  end
 
   # masters.each do |host|
   #   it 'should set up etcd' do

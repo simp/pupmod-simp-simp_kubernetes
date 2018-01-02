@@ -1,5 +1,5 @@
 <%- | Simplib::IP                 $address,
-      Optional[Simplib::Hostname] $hostname,
+      Optional[Simplib::Hostname] $hostname_override,
       Array[Simplib::URI]         $kube_masters,
       Hash                        $args,
 | -%>
@@ -13,8 +13,8 @@
 KUBELET_ADDRESS="--address=<%= $address %>"
 
 # You may leave this blank to use the actual hostname
-<% if $hostname { -%>
-KUBELET_HOSTNAME="--hostname-override=<%= $hostname %>"
+<% if $hostname_override { -%>
+KUBELET_HOSTNAME="--hostname-override=<%= $hostname_override %>"
 <% } else { -%>
 # KUBELET_HOSTNAME=""
 <% } -%>

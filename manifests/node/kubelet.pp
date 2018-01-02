@@ -15,10 +15,10 @@ class simp_kubernetes::node::kubelet {
   }
 
   $kubelet_template = epp('simp_kubernetes/etc/kubernetes/kubelet.epp', {
-      'address'      => $::simp_kubernetes::kubelet_listen_address,
-      'hostname'     => $::simp_kubernetes::kubelet_hostname,
-      'kube_masters' => $::simp_kubernetes::kube_master_urls,
-      'args'         => $pki_params + $::simp_kubernetes::kubelet_args,
+      'address'           => $::simp_kubernetes::kubelet_listen_address,
+      'hostname_override' => $::simp_kubernetes::kubelet_hostname,
+      'kube_masters'      => $::simp_kubernetes::kube_master_urls,
+      'args'              => $pki_params + $::simp_kubernetes::kubelet_args,
     }
   )
 
