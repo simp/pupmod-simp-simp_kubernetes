@@ -1,3 +1,9 @@
-* Mon Jan 1 1970 First Last <email@domain.com> - 0.0.1
-- FIXME: something you did
-- FIXME: something else you did
+* Wed Jan 03 2018 Nick Miller <nick.miller@onyxpoint.com> - 0.0.1
+- Adds parameters and code to manage ports related to
+  kubernetes with simp/iptables
+- Tests will fail on checking 'componentstatus' using 'kubectl' due to a
+  known bug in Kubernetes < 1.7 per kubernetes/kubernetes#29330
+- Use SIMP PKI for etcd and kube-api communication
+- kubeconfig for every service that talks to the API
+- Acceptance tests using pki
+- Work reliably with no TLS
