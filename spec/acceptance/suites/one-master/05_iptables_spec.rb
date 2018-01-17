@@ -77,7 +77,7 @@ describe 'kubernetes using redhat provided packages' do
 
       # This is here due to a race condition with the kube-proxy service fully
       # starting
-      sleep 20
+      retry_on(host, 'systemctl restart kube-proxy', acceptable_exit_codes: [0,130])
 
       apply_manifest_on(host, manifest, catch_changes: true)
     end
@@ -89,7 +89,7 @@ describe 'kubernetes using redhat provided packages' do
       on(controller, 'kubectl create -f /root/test-nginx_deployment.yaml')
     end
     it 'should delete it' do
-      sleep 30
+      sleep 60
       on(controller, 'kubectl delete service nginx-service')
       on(controller, 'kubectl delete deployment nginx-deployment')
     end
