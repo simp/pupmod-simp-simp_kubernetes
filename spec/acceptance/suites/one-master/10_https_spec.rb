@@ -58,7 +58,7 @@ describe 'kubernetes using redhat provided packages' do
 
       # This is here due to a race condition with the kube-proxy service fully
       # starting
-      sleep 10
+      retry_on(host, 'systemctl restart kube-proxy', acceptable_exit_codes: [0,130])
 
       apply_manifest_on(host, manifest, catch_changes: true)
     end
