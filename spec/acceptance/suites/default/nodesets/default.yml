@@ -3,10 +3,12 @@ HOSTS:
     roles:
       - server
       - default
-      - kube-master
+      - master
     platform:   el-7-x86_64
     box:        centos/7
     hypervisor: vagrant
+    vagrant_cpus: 2
+    vagrant_memsize: 2024
   # master02:
   #   roles:
   #     - kube-master
@@ -19,21 +21,21 @@ HOSTS:
   #   platform:   el-7-x86_64
   #   box:        centos/7
   #   hypervisor: vagrant
-  node01:
+  worker01:
     roles:
-      - node
+      - worker
     platform:   el-7-x86_64
     box:        centos/7
     hypervisor: vagrant
-  node02:
+  worker02:
     roles:
-      - node
+      - worker
     platform:   el-7-x86_64
     box:        centos/7
     hypervisor: vagrant
-  node03:
+  worker03:
     roles:
-      - node
+      - worker
     platform:   el-7-x86_64
     box:        centos/7
     hypervisor: vagrant
@@ -41,6 +43,6 @@ HOSTS:
 CONFIG:
   log_level: verbose
   type:      aio
-  vagrant_memsize: 512
   synced_folder: disabled
+  vagrant_memsize: 1024
 # vb_gui: true
