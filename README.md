@@ -97,7 +97,7 @@ class { 'simp_kubernetes':
 or in hiera:
 ```yaml
 ---
-simp_kubernetes::is_master: true
+simp_kubernetes::is_master: false # or unset - default is false
 simp_kubernetes::etcd_peers:
 - kube-master01.domain.net
 simp_kubernetes::kube_masters:
@@ -115,7 +115,7 @@ class { 'simp_kubernetes':
   is_master    => true
 }
 ```
-or in hiera:
+or in the hiera configuration for master nodes:
 ```yaml
 ---
 simp_kubernetes::is_master: true
