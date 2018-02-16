@@ -18,7 +18,7 @@
 
 Minimally manage a Kubernetes cluster! This module will configure the core
 services required to get a basic Kubernetes cluster up and running, based on the
-RedHat distribution available in the `extras` CentOS repo.
+distribution available in the `extras` CentOS repo.
 
 **This is currently Kubernetes 1.5**
 
