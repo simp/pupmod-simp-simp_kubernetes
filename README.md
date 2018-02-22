@@ -115,7 +115,8 @@ class { 'simp_kubernetes':
   is_master    => true
 }
 ```
-or in the hiera configuration for master nodes:
+or in the hiera configuration for master nodes, assuming the hiera for all nodes listed above
+is present:
 ```yaml
 ---
 simp_kubernetes::is_master: true
