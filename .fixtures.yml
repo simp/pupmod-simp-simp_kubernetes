@@ -3,9 +3,8 @@ fixtures:
   repositories:
     # base deps
     etcd:
-      repo: https://github.com/cristifalcas/puppet-etcd
-      # patch made upstream
-      ref: 9e3bf7f71c2ad3d91351068a51d5db06ff8763fe
+      repo: https://github.com/simp/puppet-etcd
+      ref: 1.12.2
     simplib:
       repo: https://github.com/simp/pupmod-simp-simplib
       ref: 3.3.1

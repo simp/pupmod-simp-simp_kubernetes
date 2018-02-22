@@ -16,10 +16,11 @@
 
 ## Description
 
-**FIXME:** Ensure the *Description* section is correct and complete, then remove this message!
-
 Minimally manage a Kubernetes cluster! This module will configure the core
-services required to get a basic Kubernetes cluster up and running.
+services required to get a basic Kubernetes cluster up and running, based on the
+distribution available in the `extras` CentOS repo.
+
+**This is currently Kubernetes 1.5**
 
 ![Kubernetes Architecture](assets/kube_arch.png)
 (Source: https://speakerdeck.com/luxas/kubeadm-cluster-creation-internals-from-self-hosting-to-upgradability-and-ha)
@@ -86,11 +87,39 @@ simp_kubernetes only sets up the services listed above, with a few catches:
 
 The minimal set up would look as follows:
 
+##### On all nodes:
 ```puppet
 class { 'simp_kubernetes':
   etcd_peers   => ['kube-master01.domain.net'],
   kube_masters => ['kube-master01.domain.net','kube-master02.domain.net','kube-master03.domain.net']
 }
+```
+or in hiera:
+```yaml
+---
+simp_kubernetes::is_master: false # or unset - default is false
+simp_kubernetes::etcd_peers:
+- kube-master01.domain.net
+simp_kubernetes::kube_masters:
+- kube-master01.domain.net
+- kube-master02.domain.net
+- kube-master03.domain.net
+```
+
+
+##### On the master node (only one is supported at this time):
+```puppet
+class { 'simp_kubernetes':
+  etcd_peers   => ['kube-master01.domain.net'],
+  kube_masters => ['kube-master01.domain.net','kube-master02.domain.net','kube-master03.domain.net'],
+  is_master    => true
+}
+```
+or in the hiera configuration for master nodes, assuming the hiera for all nodes listed above
+is present:
+```yaml
+---
+simp_kubernetes::is_master: true
 ```
 
 Where `etcd_peers` is a list of hostnames that will be etcd servers, and
