@@ -4,8 +4,6 @@
 * [`simp_kubernetes`](#simp_kubernetes): Full description of SIMP module 'simp_kubernetes' here.
 ## Defined types
 * [`simp_kubernetes::kubeconfig`](#simp_kuberneteskubeconfig): Lay down kubeconfig files. Useful for configuring control plane components Not recommended for personal kubeconfig files
-## Functions
-* [`simp_kubernetes::hash_to_opts`](#simp_kuberneteshash_to_opts): Turn a hash into a string with eash key prefixed with '--' and connected to each value with '='
 ## Classes
 
 ### simp_kubernetes
@@ -152,26 +150,4 @@ Data type: `Hash`
 
 Default value: {}
 
-
-## Functions
-
-### simp_kubernetes::hash_to_opts
-Type: Puppet Language
-
-Turn a hash into a string with eash key prefixed
-with '--' and connected to each value with '='
-
-#### `simp_kubernetes::hash_to_opts(Hash[String,Variant[Array,String,Numeric,Boolean,Undef]] $h)`
-
-Turn a hash into a string with eash key prefixed
-with '--' and connected to each value with '='
-
-Returns: `String`
-
-##### `h`
-
-Data type: `Hash[String,Variant[Array,String,Numeric,Boolean,Undef]]`
-
-Input hash, with Strings as keys and either a String, Array,
-Numeric, Boolean, or Undef as a value.
 
