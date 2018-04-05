@@ -1,5 +1,4 @@
 require 'spec_helper_acceptance'
-require 'json'
 
 test_name 'bootstrap using kubeadm'
 
@@ -10,7 +9,7 @@ describe 'bootstrap using kubeadm' do
   controller = masters.first
 
   shared_examples_for 'a healthy kubernetes cluster' do
-    sleep 60
+    it { sleep 60 }
     it 'should get componentstatus with no unhealthy components' do
       status = on(controller, 'kubectl get componentstatus' )
       expect(status.stdout).not_to match(/Unhealthy/)
@@ -46,9 +45,10 @@ describe 'bootstrap using kubeadm' do
     init_cmd = [
       'kubeadm init',
       '--pod-network-cidr=192.168.0.0/16',
-      '--service-cidr=10.96.0.0/12',
+      # '--service-cidr=10.96.0.0/12',
       "--apiserver-advertise-address=#{controller_ip}"
     ].join(' ')
+    # do the kubeadm init
     init_log = on(controller, init_cmd)
     $join_cmd = init_log.stdout.split("\n").grep(/kubeadm join/).first
 
@@ -56,7 +56,8 @@ describe 'bootstrap using kubeadm' do
     on(controller, 'mkdir -p /root/.kube')
     on(controller, 'cp -i /etc/kubernetes/admin.conf /root/.kube/config')
 
-    # init
+    # untaint master node so normal pods can be scheduled there
+    #   this isn't really needed
     on(controller, 'kubectl taint nodes --all node-role.kubernetes.io/master-' )
 
     # networking overlay (canal)

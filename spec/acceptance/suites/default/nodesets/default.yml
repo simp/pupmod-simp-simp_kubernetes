@@ -9,6 +9,12 @@ HOSTS:
     hypervisor: vagrant
     vagrant_cpus: 2
     vagrant_memsize: 2024
+    # forwarded_ports:
+    #   nodeport:
+    #     from: 8080
+    #     to: 80
+    #     from_ip: '127.0.0.1'
+    #     to_ip: '0.0.0.0'
   # master02:
   #   roles:
   #     - kube-master

@@ -18,6 +18,7 @@ simp_kubernetes::manage_kubelet_sevice: false
 simp_kubernetes::service_ensure: running
 
 simp_kubernetes::kubelet_overrides: |
+  [Service]
   Environment="KUBELET_CGROUP_ARGS=--cgroup-driver=systemd --runtime-cgroups=/systemd/system.slice --kubelet-cgroups=/systemd/system.slice"
 
 simp_kubernetes::packages:

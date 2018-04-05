@@ -1,23 +1,11 @@
 require 'spec_helper_acceptance'
-require 'json'
 
 test_name 'prepare system for kubeadm'
 
 describe 'prepare system for kubeadm' do
 
-  masters    = hosts_with_role(hosts,'master')
-  workers    = hosts_with_role(hosts,'worker')
-
-  worker_manifest = <<-EOF
-    include 'iptables'
-    class { 'simp_kubernetes': }
-  EOF
-  master_manifest = <<-EOF
-    include 'iptables'
-    class { 'simp_kubernetes':
-      is_master => true,
-    }
-  EOF
+  masters = hosts_with_role(hosts,'master')
+  workers = hosts_with_role(hosts,'worker')
 
   hosts.each do |host|
     it 'should set a root password' do
@@ -35,7 +23,6 @@ describe 'prepare system for kubeadm' do
     it 'should set up haveged' do
       host.install_package('epel-release')
       host.install_package('haveged')
-      host.install_package('jq')
       on(host, 'systemctl enable haveged --now')
     end
     it 'should set up dnsmasq' do
@@ -45,39 +32,52 @@ describe 'prepare system for kubeadm' do
     it 'should set sysctl' do
       on(host, 'sysctl net.bridge.bridge-nf-call-iptables=1', accept_all_exit_codes: true)
     end
-    it 'should set hieradata' do
-      hiera = {
-        'iptables::ignore' => [
-          'DOCKER',
-          'docker',
-          'KUBE-'
-        ],
-        'iptables::ports' => {
-          '22'   => nil,
-          '6666' => nil
-        },
-        'simp_options::trusted_nets' => [
-          '192.168.0.0/16',
-          '10.0.0.0/8'
-        ]
+  end
+
+  context 'uses puppet to prepare hosts' do
+    worker_manifest = <<-EOF
+      include 'iptables'
+      class { 'simp_kubernetes': }
+    EOF
+    master_manifest = <<-EOF
+      include 'iptables'
+      class { 'simp_kubernetes':
+        is_master => true,
       }
-      set_hieradata_on(host, hiera)
-    end
-  end
+    EOF
+    hiera = {
+      'iptables::optimize_rules' => false,
+      'iptables::ignore' => [
+        'DOCKER',
+        'docker',
+        'KUBE',
+        'cali'
+      ],
+      'iptables::ports' => {
+        '22'   => nil,
+        '6666' => nil
+      },
+      'simp_options::trusted_nets' => [
+        '192.168.0.0/16',
+        '10.0.0.0/8'
+      ]
+    }
 
-  masters.each do |host|
-    it "should do master stuff on #{host}" do
-      apply_manifest_on(host, master_manifest, catch_failures: true)
-      apply_manifest_on(host, master_manifest, catch_failures: true)
-      apply_manifest_on(host, master_manifest, catch_changes: true)
+    masters.each do |host|
+      it "should do master stuff on #{host}" do
+        set_hieradata_on(host, hiera)
+        apply_manifest_on(host, master_manifest, catch_failures: true)
+        apply_manifest_on(host, master_manifest, catch_failures: true)
+        apply_manifest_on(host, master_manifest, catch_changes: true)
+      end
     end
-  end
-
-  workers.each do |host|
-    it "should do node stuff on #{host}" do
-      apply_manifest_on(host, worker_manifest, catch_failures: true)
-      apply_manifest_on(host, worker_manifest, catch_failures: true)
-      apply_manifest_on(host, worker_manifest, catch_changes: true)
+    workers.each do |host|
+      it "should do node stuff on #{host}" do
+        set_hieradata_on(host, hiera)
+        apply_manifest_on(host, worker_manifest, catch_failures: true)
+        apply_manifest_on(host, worker_manifest, catch_failures: true)
+        apply_manifest_on(host, worker_manifest, catch_changes: true)
+      end
     end
   end
 end
