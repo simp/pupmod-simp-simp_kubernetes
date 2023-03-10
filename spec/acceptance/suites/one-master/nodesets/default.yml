@@ -1,46 +1,42 @@
+---
 HOSTS:
   master01:
     roles:
-      - server
-      - default
-      - kube-master
-    platform:   el-7-x86_64
-    box:        centos/7
-    hypervisor: vagrant
-  # master02:
-  #   roles:
-  #     - kube-master
-  #   platform:   el-7-x86_64
-  #   box:        centos/7
-  #   hypervisor: vagrant
-  # master03:
-  #   roles:
-  #     - kube-master
-  #   platform:   el-7-x86_64
-  #   box:        centos/7
-  #   hypervisor: vagrant
+    - server
+    - default
+    - kube-master
+    platform: el-7-x86_64
+    box: centos/7
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
+    family: centos-cloud/centos-7
+    gce_machine_type: n1-standard-2
   node01:
     roles:
-      - node
-    platform:   el-7-x86_64
-    box:        centos/7
-    hypervisor: vagrant
+    - node
+    platform: el-7-x86_64
+    box: centos/7
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
+    family: centos-cloud/centos-7
+    gce_machine_type: n1-standard-2
   node02:
     roles:
-      - node
-    platform:   el-7-x86_64
-    box:        centos/7
-    hypervisor: vagrant
+    - node
+    platform: el-7-x86_64
+    box: centos/7
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
+    family: centos-cloud/centos-7
+    gce_machine_type: n1-standard-2
   node03:
     roles:
-      - node
-    platform:   el-7-x86_64
-    box:        centos/7
-    hypervisor: vagrant
-
+    - node
+    platform: el-7-x86_64
+    box: centos/7
+    hypervisor: "<%= ENV.fetch('BEAKER_HYPERVISOR', 'vagrant') %>"
+    family: centos-cloud/centos-7
+    gce_machine_type: n1-standard-2
 CONFIG:
   log_level: verbose
-  type:      aio
+  type: aio
   vagrant_memsize: 512
   synced_folder: disabled
-# vb_gui: true
+  puppet_collection: "<%= ENV.fetch('BEAKER_PUPPET_COLLECTION', 'puppet7') %>"
